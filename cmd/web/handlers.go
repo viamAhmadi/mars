@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/viamAhmadi/mars/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -20,25 +19,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Posts: p}
-
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
-	}
+	app.render(w, r, "home.page.tmpl", &templateData{Posts: p})
 }
 
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
@@ -57,25 +38,9 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := &templateData{Post: p}
-
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
-
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Post: p,
+	})
 	//fmt.Fprintf(w, "%v", p)
 }
 
@@ -86,9 +51,9 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := "the title"
-	content := "content of this post"
-	expires := "10"
+	title := "title"
+	content := "content"
+	expires := "?"
 
 	id, err := app.posts.Insert(title, content, expires)
 	if err != nil {
