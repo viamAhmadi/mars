@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/viamAhmadi/mars/pkg/models"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -19,27 +20,25 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, post := range p {
-		fmt.Fprintf(w, "%v\n", post)
+	data := &templateData{Posts: p}
+
+	files := []string{
+		"./ui/html/home.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		app.serverError(w, err)
+		return
 	}
 
-	//files := []string{
-	//	"./ui/html/home.page.tmpl",
-	//	"./ui/html/base.layout.tmpl",
-	//	"./ui/html/footer.partial.tmpl",
-	//}
-	//ts, err := template.ParseFiles(files...)
-	//if err != nil {
-	//	app.errorLog.Println(err.Error())
-	//	app.serverError(w, err)
-	//	return
-	//}
-	//
-	//err = ts.Execute(w, nil)
-	//if err != nil {
-	//	app.errorLog.Println(err.Error())
-	//	app.serverError(w, err)
-	//}
+	err = ts.Execute(w, data)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +57,26 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "%v", p)
+	data := &templateData{Post: p}
+
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	//fmt.Fprintf(w, "%v", p)
 }
 
 func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
