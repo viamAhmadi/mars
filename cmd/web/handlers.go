@@ -8,12 +8,11 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
-
-	panic("hello")
+	// Pat matches the / path
+	//if r.URL.Path != "/" {
+	//	app.notFound(w)
+	//	return
+	//}
 
 	p, err := app.posts.Latest()
 	if err != nil {
@@ -25,7 +24,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	//id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	// Pat doesn't strip the colon from the named capture key
+	// we need get the value of :id from the query string instead id
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
 		app.notFound(w)
 		return
@@ -46,12 +48,17 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "%v", p)
 }
 
+func (app *application) createPostForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a now post..."))
+}
+
 func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		w.Header().Set("Allow", "POST")
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// The check of r.Method !="POST" is now superfluous and can be removed
+	//if r.Method != "POST" {
+	//	w.Header().Set("Allow", "POST")
+	//	app.clientError(w, http.StatusMethodNotAllowed)
+	//	return
+	//}
 
 	title := "title"
 	content := "content"
@@ -63,5 +70,6 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/post?id=%d", id), http.StatusSeeOther)
+	//http.Redirect(w, r, fmt.Sprintf("/post?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther)
 }
