@@ -49,7 +49,7 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createPostForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a now post..."))
+	app.render(w, r, "create.page.tmpl", nil)
 }
 
 func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
@@ -59,10 +59,15 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 	//	app.clientError(w, http.StatusMethodNotAllowed)
 	//	return
 	//}
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
-	title := "title"
-	content := "content"
-	expires := "?"
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	expires := r.PostForm.Get("expires")
 
 	id, err := app.posts.Insert(title, content, expires)
 	if err != nil {
