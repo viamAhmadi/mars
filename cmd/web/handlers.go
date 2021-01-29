@@ -13,6 +13,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	panic("hello")
+
 	p, err := app.posts.Latest()
 	if err != nil {
 		app.serverError(w, err)
