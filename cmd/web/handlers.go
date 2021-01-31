@@ -42,7 +42,6 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-
 	app.render(w, r, "show.page.tmpl", &templateData{
 		Post: p,
 	})
@@ -87,6 +86,8 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	app.session.Put(r, "flash", "Post successfully created!")
 
 	//http.Redirect(w, r, fmt.Sprintf("/post?id=%d", id), http.StatusSeeOther)
 	http.Redirect(w, r, fmt.Sprintf("/post/%d", id), http.StatusSeeOther)

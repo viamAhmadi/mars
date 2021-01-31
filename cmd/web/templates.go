@@ -10,7 +10,8 @@ import (
 
 type templateData struct {
 	CurrentYear int
-	Form    *forms.Form
+	Flash       string
+	Form        *forms.Form
 	Post        *models.Post
 	Posts       []*models.Post
 }
