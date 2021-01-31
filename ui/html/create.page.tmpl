@@ -4,22 +4,34 @@
 
 {{define "body"}}
     <form action="/post/create" method="post">
-        <div>
-            <lable>Title:</lable>
-            <input type="text" name="title">
-        </div>
-        <div>
-            <lable>Content:</lable>
-            <textarea name="content"></textarea>
-        </div>
-        <div>
-            <lable>Delete in:</lable>
-            <input type="radio" name="expires" value="365" checked> One Year
-            <input type="radio" name="expires" value="7"> One Week
-            <input type="radio" name="expires" value="1"> One Day
-        </div>
-        <div>
-            <input type="submit" value="Publish post">
-        </div>
+        {{with .Form}}
+            <div>
+                <lable>Title:</lable>
+                {{with .Errors.Get "title"}}
+                    <lable class="error">{{.}}</lable>
+                {{end}}
+                <input type="text" name="title" value="{{.Get "title"}}">
+            </div>
+            <div>
+                <lable>Content:</lable>
+                {{with .Errors.Get "content"}}
+                    <lable class="error">{{.}}</lable>
+                {{end}}
+                <textarea name="content">{{.Get "content"}}</textarea>
+            </div>
+            <div>
+                <lable>Delete in:</lable>
+                {{with .Errors.Get "expires"}}
+                    <lable class="error">{{.}}</lable>
+                {{end}}
+                {{$exp := or (.Get "expires") "365"}}
+                <input type="radio" name="expires" value="365" {{if (eq $exp "365")}}checked{{end}}> One Year
+                <input type="radio" name="expires" value="7" {{if (eq $exp "7")}}checked{{end}}> One Week
+                <input type="radio" name="expires" value="1" {{if (eq $exp "1")}}checked{{end}}> One Day
+            </div>
+            <div>
+                <input type="submit" value="Publish post">
+            </div>
+        {{end}}
     </form>
 {{end}}

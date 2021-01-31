@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/viamAhmadi/mars/pkg/forms"
 	"github.com/viamAhmadi/mars/pkg/models"
 	"html/template"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 
 type templateData struct {
 	CurrentYear int
+	Form    *forms.Form
 	Post        *models.Post
 	Posts       []*models.Post
 }
